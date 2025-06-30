@@ -1,0 +1,43 @@
+{
+  "expo": {
+    "name": "Cord AI",
+    "slug": "cord-ai",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./public/cord-ai-logo.png",
+    "userInterfaceStyle": "dark",
+    "splash": {
+      "image": "./public/cord-ai-logo.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#000000"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.cordai.app",
+      "buildNumber": "1"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./public/cord-ai-logo.png",
+        "backgroundColor": "#000000"
+      },
+      "package": "com.cordai.app",
+      "versionCode": 1
+    },
+    "web": {
+      "favicon": "./public/cord-ai-logo.png",
+      "bundler": "metro"
+    },
+    "plugins": [
+      "expo-router"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "c854ecf1-6966-4b4c-acff-087d5bf5202b"
+      }
+    }
+  }
+}
