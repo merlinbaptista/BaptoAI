@@ -23,14 +23,65 @@ class ChatGPTService {
   private baseURL = 'https://api.openai.com/v1';
 
   constructor() {
-    this.apiKey = import.meta.env.VITE_OPENAI_API_KEY || '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';
+    this.apiKey = import.meta.env.VITE_OPENAI_API_KEY || '';
     console.log('🤖 ChatGPT 4o-mini API Key loaded:', this.apiKey ? 'Yes' : 'No');
+    console.log('🔑 API Key length:', this.apiKey.length);
+    console.log('🔑 API Key prefix:', this.apiKey.substring(0, 20) + '...');
+    
+    if (!this.apiKey) {
+      console.error('❌ ChatGPT API key is missing! Please check your .env file.');
+    }
+  }
+
+  async testConnection(): Promise<boolean> {
+    try {
+      console.log('🧪 Testing ChatGPT 4o-mini API connection...');
+      const response = await fetch(`${this.baseURL}/chat/completions`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${this.apiKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: 'gpt-4o-mini',
+          messages: [
+            {
+              role: 'user',
+              content: 'Hello, can you see this message? Please respond with "API connection successful".'
+            }
+          ],
+          max_tokens: 50,
+        }),
+      });
+
+      console.log('📥 Test response status:', response.status);
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('❌ API test failed:', response.status, errorText);
+        return false;
+      }
+
+      const data = await response.json();
+      console.log('✅ API test response:', data);
+      
+      const isConnected = response.ok && data.choices?.[0]?.message?.content;
+      console.log(isConnected ? '✅ ChatGPT 4o-mini API connected successfully' : '❌ ChatGPT API connection failed');
+      return isConnected;
+    } catch (error) {
+      console.error('❌ ChatGPT connection test failed:', error);
+      return false;
+    }
   }
 
   async analyzeScreenWithVision(imageData: string, userQuery?: string, ocrData?: string, uiElements?: any[]): Promise<string> {
     console.log('🔍 Starting ChatGPT 4o-mini screen analysis...');
     console.log('📸 Image data length:', imageData.length);
     console.log('❓ User query:', userQuery);
+
+    if (!this.apiKey) {
+      throw new Error('ChatGPT API key is not configured. Please check your environment variables.');
+    }
 
     const systemPrompt = `You are Cord AI, an advanced screen guidance assistant powered by ChatGPT 4o-mini. You can see and analyze screenshots with exceptional detail and provide step-by-step guidance.
 
@@ -111,6 +162,15 @@ Please analyze the screenshot now and provide detailed guidance.`;
       if (!response.ok) {
         const errorText = await response.text();
         console.error('❌ ChatGPT API error:', response.status, errorText);
+        
+        if (response.status === 401) {
+          throw new Error('ChatGPT API authentication failed. Please check your API key.');
+        } else if (response.status === 429) {
+          throw new Error('ChatGPT API rate limit exceeded. Please wait a moment and try again.');
+        } else if (response.status === 400) {
+          throw new Error('Invalid request to ChatGPT API. The image may be too large or in an unsupported format.');
+        }
+        
         throw new Error(`ChatGPT API error: ${response.status} - ${errorText}`);
       }
 
@@ -129,14 +189,7 @@ Please analyze the screenshot now and provide detailed guidance.`;
     } catch (error) {
       console.error('❌ ChatGPT API error:', error);
       if (error instanceof Error) {
-        if (error.message.includes('401')) {
-          throw new Error('ChatGPT API access denied. Please check your API key.');
-        } else if (error.message.includes('429')) {
-          throw new Error('ChatGPT API rate limit exceeded. Please wait a moment and try again.');
-        } else if (error.message.includes('400')) {
-          throw new Error('Invalid request to ChatGPT API. The image may be too large or in an unsupported format.');
-        }
-        throw new Error(`Failed to analyze screen with ChatGPT: ${error.message}`);
+        throw error;
       }
       throw new Error('Failed to analyze screen with ChatGPT. Please check your connection and try again.');
     }
@@ -144,6 +197,10 @@ Please analyze the screenshot now and provide detailed guidance.`;
 
   async continueConversation(messages: Array<{ role: 'user' | 'assistant'; content: string }>, newMessage: string): Promise<string> {
     console.log('💬 Continuing conversation with ChatGPT 4o-mini...');
+
+    if (!this.apiKey) {
+      throw new Error('ChatGPT API key is not configured. Please check your environment variables.');
+    }
 
     const systemPrompt = `You are Cord AI, an intelligent screen guidance assistant powered by ChatGPT 4o-mini. Continue the conversation naturally while providing helpful guidance. Keep responses concise but informative.`;
 
@@ -211,6 +268,11 @@ Please analyze the screenshot now and provide detailed guidance.`;
   async extractOCRText(imageData: string): Promise<string> {
     console.log('📝 Extracting OCR text with ChatGPT 4o-mini...');
 
+    if (!this.apiKey) {
+      console.warn('ChatGPT API key not available, skipping OCR extraction');
+      return '';
+    }
+
     const messages: ChatGPTMessage[] = [
       {
         role: 'system',
@@ -263,37 +325,6 @@ Please analyze the screenshot now and provide detailed guidance.`;
     } catch (error) {
       console.error('ChatGPT OCR error:', error);
       return '';
-    }
-  }
-
-  // Test method to verify API connectivity
-  async testConnection(): Promise<boolean> {
-    try {
-      console.log('🧪 Testing ChatGPT 4o-mini API connection...');
-      const response = await fetch(`${this.baseURL}/chat/completions`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${this.apiKey}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          model: 'gpt-4o-mini',
-          messages: [
-            {
-              role: 'user',
-              content: 'Hello, can you see this message?'
-            }
-          ],
-          max_tokens: 50,
-        }),
-      });
-
-      const isConnected = response.ok;
-      console.log(isConnected ? '✅ ChatGPT 4o-mini API connected successfully' : '❌ ChatGPT API connection failed');
-      return isConnected;
-    } catch (error) {
-      console.error('ChatGPT connection test failed:', error);
-      return false;
     }
   }
 }

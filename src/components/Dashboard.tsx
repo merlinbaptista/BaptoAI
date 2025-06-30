@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Shield, Zap, LogOut, User, Settings, Layout, Maximize2, Minimize2, Monitor, Sparkles, Target } from 'lucide-react';
 import { ScreenCapture } from './ScreenCapture';
 import { InteractiveScreenShare } from './InteractiveScreenShare';
@@ -9,6 +9,7 @@ import { StepByStepGuidance } from './StepByStepGuidance';
 import { StatusBar } from './StatusBar';
 import { useEnhancedAnalysis } from '../hooks/useEnhancedAnalysis';
 import { useVoice } from '../hooks/useVoice';
+import { chatGPTService } from '../services/chatgpt';
 import { User as UserType } from '../types';
 
 interface DashboardProps {
@@ -26,6 +27,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, onSignOut }) => {
   const [stepByStepMode, setStepByStepMode] = useState(false);
   const [userGoal, setUserGoal] = useState<string>('');
   const [interactionTracking, setInteractionTracking] = useState(false);
+  const [apiStatus, setApiStatus] = useState<'checking' | 'connected' | 'error'>('checking');
   const { 
     analysis, 
     isAnalyzing, 
@@ -44,8 +46,30 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, onSignOut }) => {
   const [splitRatio, setSplitRatio] = useState(50);
   const [isResizing, setIsResizing] = useState(false);
 
+  // Test API connection on component mount
+  useEffect(() => {
+    const testAPI = async () => {
+      try {
+        console.log('🧪 Testing ChatGPT API connection...');
+        const isConnected = await chatGPTService.testConnection();
+        setApiStatus(isConnected ? 'connected' : 'error');
+        
+        if (isConnected) {
+          speak("ChatGPT 4o-mini API is connected and ready for enhanced screen analysis!");
+        } else {
+          console.error('❌ ChatGPT API connection failed');
+        }
+      } catch (error) {
+        console.error('❌ API test error:', error);
+        setApiStatus('error');
+      }
+    };
+
+    testAPI();
+  }, [speak]);
+
   // Start mouse tracking when component mounts
-  React.useEffect(() => {
+  useEffect(() => {
     startMouseTracking();
     return () => stopMouseTracking();
   }, [startMouseTracking, stopMouseTracking]);
@@ -400,6 +424,28 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, onSignOut }) => {
           </div>
           
           <div className="flex items-center gap-4 animate-slide-in-right">
+            {/* API Status */}
+            <div className={`flex items-center gap-2 px-3 py-1 rounded-full ${
+              apiStatus === 'connected' ? 'bg-green-900/20 border border-green-500/30' :
+              apiStatus === 'error' ? 'bg-red-900/20 border border-red-500/30' :
+              'bg-yellow-900/20 border border-yellow-500/30'
+            }`}>
+              <div className={`w-2 h-2 rounded-full ${
+                apiStatus === 'connected' ? 'bg-green-400' :
+                apiStatus === 'error' ? 'bg-red-400' :
+                'bg-yellow-400 animate-pulse'
+              }`} />
+              <span className={`text-sm ${
+                apiStatus === 'connected' ? 'text-green-300' :
+                apiStatus === 'error' ? 'text-red-300' :
+                'text-yellow-300'
+              }`}>
+                {apiStatus === 'connected' ? 'API Connected' :
+                 apiStatus === 'error' ? 'API Error' :
+                 'Checking API...'}
+              </span>
+            </div>
+
             {/* Layout Controls */}
             <div className="flex items-center gap-2 px-3 py-1 bg-blue-900/20 border border-blue-500/30 rounded-full">
               <button
