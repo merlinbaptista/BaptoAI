@@ -18,6 +18,7 @@ import {
   ChevronRight,
   ArrowLeft
 } from 'lucide-react';
+import { BoltBadge } from './BoltBadge';
 
 interface PricingPageProps {
   onGetStarted: () => void;
@@ -494,6 +495,9 @@ export const PricingPage: React.FC<PricingPageProps> = ({ onGetStarted, onContac
           </div>
         </div>
       </div>
+
+      {/* Bolt.new Badge */}
+      <BoltBadge position="bottom-right" variant="gradient" size="md" />
     </div>
   );
 };

@@ -7,6 +7,7 @@ import { EnhancedAnalysisPanel } from './EnhancedAnalysisPanel';
 import { GuidanceSystem } from './GuidanceSystem';
 import { StepByStepGuidance } from './StepByStepGuidance';
 import { StatusBar } from './StatusBar';
+import { BoltBadge } from './BoltBadge';
 import { useEnhancedAnalysis } from '../hooks/useEnhancedAnalysis';
 import { useVoice } from '../hooks/useVoice';
 import { chatGPTService } from '../services/chatgpt';
@@ -235,6 +236,9 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, onSignOut }) => {
             <Monitor className="w-4 h-4" />
             Exit Interactive Mode
           </button>
+
+          {/* Bolt.new Badge */}
+          <BoltBadge position="bottom-left" variant="gradient" size="sm" />
         </div>
       </ScreenInteractionManager>
     );
@@ -523,6 +527,9 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, onSignOut }) => {
         isListening={isListening}
         isSpeaking={isSpeaking}
       />
+
+      {/* Bolt.new Badge */}
+      <BoltBadge position="bottom-right" variant="gradient" size="md" />
     </div>
   );
 };

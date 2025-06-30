@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Eye, EyeOff, Mail, Lock, User, ArrowRight, Sparkles, Shield, Zap, DollarSign, AlertCircle, CheckCircle, UserPlus } from 'lucide-react';
+import { BoltBadge } from './BoltBadge';
 
 interface AuthPageProps {
   onSignIn: (email: string, password: string) => Promise<boolean>;
@@ -305,6 +306,9 @@ export const AuthPage: React.FC<AuthPageProps> = ({ onSignIn, onSignUp, isLoadin
           </div>
         </div>
       </div>
+
+      {/* Bolt.new Badge */}
+      <BoltBadge position="bottom-left" variant="dark" size="sm" />
     </div>
   );
 };

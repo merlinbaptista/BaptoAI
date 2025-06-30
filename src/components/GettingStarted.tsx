@@ -13,6 +13,7 @@ import {
   Volume2
 } from 'lucide-react';
 import { User } from '../types';
+import { BoltBadge } from './BoltBadge';
 
 interface GettingStartedProps {
   user: User;
@@ -333,6 +334,9 @@ export const GettingStarted: React.FC<GettingStartedProps> = ({ user, onComplete
           </button>
         </div>
       </div>
+
+      {/* Bolt.new Badge */}
+      <BoltBadge position="bottom-right" variant="dark" size="sm" />
     </div>
   );
 };
