@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Shield, Zap, LogOut, User, Settings, Layout, Maximize2, Minimize2, Monitor, Sparkles, Target } from 'lucide-react';
-import { ScreenCapture } from './ScreenCapture';
+import { EnhancedScreenCapture } from './EnhancedScreenCapture';
 import { InteractiveScreenShare } from './InteractiveScreenShare';
 import { ScreenInteractionManager } from './ScreenInteractionManager';
 import { EnhancedAnalysisPanel } from './EnhancedAnalysisPanel';
@@ -29,6 +29,8 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, onSignOut }) => {
   const [userGoal, setUserGoal] = useState<string>('');
   const [interactionTracking, setInteractionTracking] = useState(false);
   const [apiStatus, setApiStatus] = useState<'checking' | 'connected' | 'error'>('checking');
+  const [autoAnalysisResults, setAutoAnalysisResults] = useState<string[]>([]);
+  
   const { 
     analysis, 
     isAnalyzing, 
@@ -40,6 +42,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, onSignOut }) => {
     startMouseTracking,
     stopMouseTracking
   } = useEnhancedAnalysis();
+  
   const { isSpeaking, isListening, speak } = useVoice();
   const [isCapturing, setIsCapturing] = useState(false);
   const [layoutMode, setLayoutMode] = useState<LayoutMode>('split-horizontal');
@@ -56,7 +59,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, onSignOut }) => {
         setApiStatus(isConnected ? 'connected' : 'error');
         
         if (isConnected) {
-          speak("ChatGPT 4o-mini API is connected and ready for enhanced screen analysis!");
+          speak("ChatGPT 4o-mini API is connected and ready for automatic screen analysis!");
         } else {
           console.error('❌ ChatGPT API connection failed');
         }
@@ -89,6 +92,21 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, onSignOut }) => {
     }
   };
 
+  const handleAutoAnalysisResult = (analysis: string) => {
+    console.log('📊 Auto-analysis result received:', analysis.substring(0, 100) + '...');
+    
+    // Add to auto-analysis results
+    setAutoAnalysisResults(prev => [...prev.slice(-4), analysis]); // Keep last 5 results
+    
+    // Update the guidance system with the latest analysis
+    setCurrentQuery('Automatic screen analysis completed');
+    
+    // Trigger enhanced analysis if we have screen data
+    if (currentScreenData) {
+      analyzeScreen(currentScreenData, 'Latest automatic analysis: ' + analysis);
+    }
+  };
+
   const handleQuerySubmit = (query: string) => {
     setCurrentQuery(query);
     
@@ -109,7 +127,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, onSignOut }) => {
     if (analysis?.nextAction) {
       speak(`Executing action with ChatGPT 4o-mini: ${analysis.nextAction.description}`);
       setTimeout(() => {
-        speak("Action completed successfully! Capture a new frame to continue with enhanced ChatGPT analysis.");
+        speak("Action completed successfully! The auto-analysis will continue monitoring your screen for changes.");
       }, 1500);
     }
   };
@@ -136,7 +154,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, onSignOut }) => {
   const handleStepByStepComplete = () => {
     setStepByStepMode(false);
     setUserGoal('');
-    speak("Congratulations! You've completed all the steps successfully with ChatGPT 4o-mini guidance. Great job!");
+    speak("Congratulations! You've completed all the steps successfully with ChatGPT 4o-mini guidance. Auto-analysis will continue monitoring your screen.");
   };
 
   const handleInteractionCapture = (interactionData: any) => {
@@ -248,10 +266,11 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, onSignOut }) => {
     const screenCapturePanel = (
       <div className="h-full flex flex-col split-panel">
         <div className="flex-1">
-          <ScreenCapture 
+          <EnhancedScreenCapture 
             onFrameCapture={handleFrameCapture}
             onStreamReady={handleStreamReady}
             onScreenShareStart={handleInteractiveScreenShare}
+            onAnalysisResult={handleAutoAnalysisResult}
           />
         </div>
         <div className="mt-4 flex-shrink-0">
@@ -352,10 +371,11 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, onSignOut }) => {
   const renderDefaultLayout = () => (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-full">
       <div className="lg:col-span-2 animate-slide-in-left">
-        <ScreenCapture 
+        <EnhancedScreenCapture 
           onFrameCapture={handleFrameCapture}
           onStreamReady={handleStreamReady}
           onScreenShareStart={handleInteractiveScreenShare}
+          onAnalysisResult={handleAutoAnalysisResult}
         />
       </div>
       
@@ -422,8 +442,14 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, onSignOut }) => {
                     <span className="text-xs text-purple-300 font-medium">Interactive</span>
                   </div>
                 )}
+                {autoAnalysisResults.length > 0 && (
+                  <div className="flex items-center gap-1 px-2 py-1 bg-gradient-to-r from-green-600/20 to-emerald-600/20 border border-green-500/30 rounded-full">
+                    <Sparkles className="w-3 h-3 text-green-400 animate-pulse" />
+                    <span className="text-xs text-green-300 font-medium">Auto-Analysis Active</span>
+                  </div>
+                )}
               </div>
-              <p className="text-sm text-gray-400">Enhanced multimodal AI-powered screen guidance with real-time interaction</p>
+              <p className="text-sm text-gray-400">Enhanced multimodal AI-powered screen guidance with automatic analysis</p>
             </div>
           </div>
           
@@ -449,6 +475,14 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, onSignOut }) => {
                  'Checking API...'}
               </span>
             </div>
+
+            {/* Auto-Analysis Status */}
+            {autoAnalysisResults.length > 0 && (
+              <div className="flex items-center gap-2 px-3 py-1 bg-green-900/20 border border-green-500/30 rounded-full">
+                <Sparkles className="w-4 h-4 text-green-400 animate-pulse" />
+                <span className="text-sm text-green-300">{autoAnalysisResults.length} Auto-Analyses</span>
+              </div>
+            )}
 
             {/* Layout Controls */}
             <div className="flex items-center gap-2 px-3 py-1 bg-blue-900/20 border border-blue-500/30 rounded-full">
