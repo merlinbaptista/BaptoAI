@@ -1,23 +1,21 @@
+
 # Bapto AI – Your Screen-Shared ChatGPT Companion
 
-![Bapto AI Banner](./assets/bapto-preview.jpg) <!-- Replace with actual path -->
-
-## Overview
-
-**Bapto AI** is a real-time, intelligent screen-sharing assistant that integrates with ChatGPT-like models to help users solve problems directly on their screen. Whether you’re editing videos in Adobe Premiere Pro or struggling with buttons in After Effects, Bapto floats above your workspace as a voice-enabled AI, ready to assist through smart chat or speech.
+Bapto AI is a real-time, intelligent screen-sharing assistant that helps users navigate complex software by integrating powerful AI models such as ChatGPT, Gemini, and OpenRouter. Whether you're working in Adobe Premiere Pro, After Effects, or any design tool, Bapto floats over your screen and provides instant, voice-enabled support based on what you see and do.
 
 ---
 
 ## Features
 
-- ChatGPT-like assistance that understands your screen and provides real-time help
-- On-screen guidance through UI element detection and context-aware suggestions
-- Voice interaction with speech synthesis for hands-free support
-- Mouse tracking to interpret user intent and focus
-- Multi-AI support using ChatGPT, Gemini Pro, and OpenRouter APIs
-- Visual recognition powered by Roboflow to detect screen elements
-- Floating overlay UI that works across apps without interrupting workflow
-- Subscription-ready infrastructure for monetization
+- Real-time, floating AI assistant
+- Context-aware responses based on screen content
+- Voice interaction using speech synthesis
+- AI integration with ChatGPT, Gemini Pro, and OpenRouter
+- On-screen UI element recognition using Roboflow
+- Mouse tracking and interaction detection
+- Modular architecture built with modern web technologies
+- Secure `.env`-based configuration
+- Scalable setup with subscription-ready infrastructure
 
 ---
 
@@ -25,9 +23,9 @@
 
 As a passionate video editor and graphic designer, I often found myself struggling to locate tools or resolve issues within complex software like Adobe Premiere Pro or After Effects.
 
-I used to take screenshots and send them to ChatGPT manually to ask for help. But this process was slow and disrupted my workflow.
+I used to take screenshots and send them to ChatGPT manually to ask for help, but that process was slow and disrupted my creative flow.
 
-That’s when the idea hit me:
+That’s when the idea struck:
 
 *"What if there was a floating AI assistant that could watch my screen and guide me instantly?"*
 
@@ -35,61 +33,124 @@ And thus, **Bapto AI** was born.
 
 ---
 
-## What I Learned
+## Getting Started
 
-- Building modern web apps that interact with live screen content
-- Integrating multiple AI models and managing performance
-- Real-time mouse tracking and element recognition
-- Using Roboflow for object detection on-screen
-- Secure API key management with `.env` files
-- Creating responsive voice feedback and overlay chat UI
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/your-username/bapto-ai.git
+cd bapto-ai/project
+```
+
+### 2. Install Dependencies
+
+Make sure you have **Node.js (v18+)** installed.
+
+```bash
+npm install
+```
+
+### 3. Configure Environment Variables
+
+Create a `.env` file in the `project/` directory. Example:
+
+```env
+VITE_OPENROUTER_API_KEY=your_openrouter_api_key
+VITE_GEMINI_API_KEY=your_gemini_api_key
+VITE_SOME_OTHER_ENV=your_value
+```
+
+> Note: Never share your `.env` file publicly.
+
+### 4. Run the App in Development Mode
+
+```bash
+npm run dev
+```
+
+Visit [http://localhost:5173](http://localhost:5173) to see the app running locally.
 
 ---
 
-## How I Built It
+## Project Structure
 
-- **Frontend**: React + TypeScript + TailwindCSS (via Vite)
+```
+project/
+├── public/                 # Static assets
+├── src/                    # Main application source
+│   ├── components/         # React components
+│   ├── services/           # API utilities and logic
+│   ├── App.tsx             # Main app logic
+│   └── main.tsx            # App entry point
+├── .env                    # Environment variables
+├── package.json            # Dependencies and scripts
+├── vite.config.ts          # Vite configuration
+├── tailwind.config.js      # TailwindCSS setup
+├── tsconfig.json           # TypeScript configuration
+└── index.html              # App container
+```
+
+---
+
+## How It Works
+
+- **Frontend**: Built using React, TypeScript, and TailwindCSS via Vite
 - **AI Services**: ChatGPT, Gemini Pro, OpenRouter APIs
-- **Vision Support**: Roboflow
-- **User Interaction**: ScreenInteractionManager, MouseTracking modules
-- **Voice Feedback**: Speech synthesis (Web Speech API or external library)
-- **Subscription System**: RevenueCat integration-ready
-- **Tooling**: PostCSS, ESLint, .env configurations
+- **Visual Recognition**: Roboflow for screen element detection
+- **Voice Interaction**: Web Speech API or external TTS libraries
+- **Mouse/Screen Tracking**: Custom utilities to detect user focus
+- **Overlay UI**: Responsive floating assistant design
+- **Environment Management**: Using `.env` for secure key handling
 
 ---
 
 ## Challenges Faced
 
-- Designing a floating overlay chatbot that doesn't block user interaction
-- Capturing screen content efficiently without sacrificing performance
-- Balancing frequent screenshot analysis with fast AI response times
-- Managing concurrent AI services in one unified interface
-- Preparing authentication and monetization workflows for scaling
+- Developing a chatbot UI that doesn’t interfere with screen activity
+- Capturing screen images efficiently while maintaining performance
+- Integrating and managing multiple AI APIs simultaneously
+- Handling real-time feedback with minimal latency
+- Planning for monetization via subscription (RevenueCat-ready)
 
 ---
 
-## Sneak Peek
+## Available Scripts
 
-![Bapto AI Interface Preview](./assets/bapto-preview.jpg) <!-- Replace with actual image path -->
+```bash
+npm run dev         # Starts the development server
+npm run build       # Builds the app for production
+npm run preview     # Previews the production build
+npm run lint        # Runs ESLint for code quality checks
+```
+
+---
+
+## Deployment
+
+You can deploy this app using platforms like:
+
+- Vercel: https://vercel.com/
+- Netlify: https://www.netlify.com/
+- Render: https://render.com/
+
+> Make sure to add all required `.env` variables in the deployment platform's environment settings.
 
 ---
 
 ## What's Next
 
-- Optimizing screenshot speed and image compression
-- Adding multilingual voice support for wider accessibility
-- Full RevenueCat subscription integration for premium features
-- A native desktop version for tighter integration with creative software
+- Optimizing screenshot frequency and compression techniques
+- Adding multilingual voice interaction
+- Full integration with RevenueCat for premium plans
+- Building a native desktop version for more seamless software support
 
 ---
 
 ## License
 
-MIT License. See [LICENSE](./LICENSE) for details.
+This project is licensed under the MIT License.  
+See the [`LICENSE`](./LICENSE) file for details.
 
 ---
 
-## Contact
-
-Built with passion by Merlin Baptista. For queries or collaborations, reach out at [your-email@example.com].
-
+Created and maintained by **Merlin Baptista**.  
