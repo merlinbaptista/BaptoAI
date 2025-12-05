@@ -24,18 +24,14 @@ class ChatGPTService {
 
   constructor() {
     this.apiKey = import.meta.env.VITE_OPENAI_API_KEY || '';
-    console.log('🤖 ChatGPT 4o-mini API Key loaded:', this.apiKey ? 'Yes' : 'No');
-    console.log('🔑 API Key length:', this.apiKey.length);
-    console.log('🔑 API Key prefix:', this.apiKey.substring(0, 20) + '...');
-    
+
     if (!this.apiKey) {
-      console.error('❌ ChatGPT API key is missing! Please check your .env file.');
+      console.error('ChatGPT API key is missing');
     }
   }
 
   async testConnection(): Promise<boolean> {
     try {
-      console.log('🧪 Testing ChatGPT 4o-mini API connection...');
       const response = await fetch(`${this.baseURL}/chat/completions`, {
         method: 'POST',
         headers: {
@@ -54,22 +50,17 @@ class ChatGPTService {
         }),
       });
 
-      console.log('📥 Test response status:', response.status);
-      
       if (!response.ok) {
         const errorText = await response.text();
-        console.error('❌ API test failed:', response.status, errorText);
+        console.error('API test failed:', response.status);
         return false;
       }
 
       const data = await response.json();
-      console.log('✅ API test response:', data);
-      
       const isConnected = response.ok && data.choices?.[0]?.message?.content;
-      console.log(isConnected ? '✅ ChatGPT 4o-mini API connected successfully' : '❌ ChatGPT API connection failed');
       return isConnected;
     } catch (error) {
-      console.error('❌ ChatGPT connection test failed:', error);
+      console.error('ChatGPT connection test failed:', error);
       return false;
     }
   }
